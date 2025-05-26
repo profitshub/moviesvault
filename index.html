@@ -1,22 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f23">
     <title>MovieVault - Unlimited Movie Access</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
+        }        body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+            position: relative;
             color: white;
             overflow-x: hidden;
             min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('ChatGPT Image May 24, 2025, 08_59_22 PM.png') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: -1;
         }
 
         .background-animation {
@@ -200,9 +221,7 @@
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
-        }
-
-        .modal {
+        }        .modal {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -215,6 +234,41 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: modalPop 0.4s ease forwards;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            z-index: 1;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e50914;
+        }
+
+        @media (max-width: 768px) {
+            .close-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 28px;
+            }
         }
 
         @keyframes modalPop {
@@ -330,25 +384,135 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
-        }
-
-        @media (max-width: 768px) {
-            .logo { font-size: 2.5rem; }
-            .search-section { padding: 40px 20px; }
-            .modal { padding: 30px 20px; }
+        }        @media (max-width: 768px) {
+            .logo { 
+                font-size: 2.2rem; 
+                padding: 0 15px;
+            }
+            .tagline {
+                font-size: 1.1rem;
+                padding: 0 15px;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+                padding: 0 20px;
+            }
+            .search-section { 
+                padding: 30px 15px;
+                margin: 20px 15px;
+            }
+            .search-input {
+                padding: 15px 50px 15px 15px;
+                font-size: 1rem;
+            }
+            .search-btn {
+                padding: 10px 15px;
+                right: 5px;
+            }
+            .modal { 
+                padding: 25px 15px;
+                width: 95%;
+            }
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            .modal-text {
+                font-size: 1rem;
+            }            .footer {
+                padding: 30px 0 calc(20px + env(safe-area-inset-bottom));
+                margin-top: 40px;
+            }
             .footer-content { 
-                flex-direction: column; 
+                grid-template-columns: 1fr;
                 text-align: center;
+                gap: 40px;
             }
             .footer-section { 
-                margin-bottom: 30px; 
+                margin-bottom: 0;
+                padding: 0 20px;
+            }
+            .footer-section h3,
+            .footer-section h4 {
+                font-size: 1.4rem;
+                margin-bottom: 15px;
             }
             .footer-stats { 
-                justify-content: center; 
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 30px;
+            }
+            .stat {
+                flex: 1 1 auto;
+                min-width: 100px;
+                max-width: 150px;
+                padding: 10px;
+            }
+            .stat-number {
+                font-size: 1.4rem;
+                margin-bottom: 5px;
             }
             .offer-wall-container {
-                padding: 20px;
-                margin: 20px auto;
+                padding: 20px 15px;
+                margin: 15px;
+            }
+            .verification-title {
+                font-size: 2rem;
+                padding: 0 15px;
+            }
+            .verification-text {
+                font-size: 1rem;
+                padding: 0 15px;
+            }
+            .download-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+                width: calc(100% - 30px);
+                max-width: 300px;
+            }
+            .share-section {
+                margin: 40px 15px;
+                padding: 30px 15px;
+            }
+            .share-btn {
+                width: calc(100% - 30px);
+                max-width: 250px;
+                margin: 10px auto;
+            }
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-badges {
+                justify-content: center;
+                margin-top: 15px;
+            }
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* Additional mobile optimizations for smaller screens */
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.8rem;
+            }
+            .tagline {
+                font-size: 1rem;
+            }
+            .footer-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            .stat {
+                width: 100%;
+            }
+            .modal {
+                width: 100%;
+                border-radius: 15px 15px 0 0;
+                bottom: 0;
+                top: auto;
+                transform: none !important;
             }
         }
 
@@ -421,20 +585,27 @@
 
         .footer-links li {
             margin-bottom: 12px;
-        }
-
-        .footer-links a {
+        }            .footer-links a {
             color: #ccc;
             text-decoration: none;
             transition: color 0.3s ease;
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 8px 0;
         }
 
         .footer-links a:hover {
             color: #e50914;
             cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .footer-links a {
+                justify-content: center;
+                padding: 12px 0;
+                font-size: 1.1rem;
+            }
         }
 
         .footer-bottom {
@@ -503,10 +674,9 @@
             <button class="share-btn" onclick="shareToFacebook()">📘 Share on Facebook</button>
             <button class="share-btn" style="background: #1da1f2;" onclick="shareToTwitter()">🐦 Share on Twitter</button>
         </div>
-    </div>
-
-    <div class="modal-overlay" id="modalOverlay">
+    </div>    <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
+            <button onclick="document.getElementById('modalOverlay').style.display='none'" class="close-btn">✕</button>
             <h2 class="modal-title">🎉 Movie Found!</h2>
             <p class="modal-text" id="modalText">Great news! Your movie is available for download.</p>
             <button class="download-btn" onclick="proceedToVerification()">Continue to Download</button>
@@ -526,10 +696,33 @@
                 Complete one offer below to verify your access and unlock your movie download.
                 This helps us keep the service free and secure for everyone.
             </p>
-            
-            <!-- OptiDownloader Integration -->
+              <!-- OptiDownloader Integration -->
             <div id="offerWallContent">
-                <script type="text/javascript">var lck = false;</script>
+                <script type="text/javascript">
+                    // Initialize lck variable
+                    window.lck = false;
+                    // Create a custom event to track when lck changes
+                    window.addEventListener('lckChanged', function(e) {
+                        if (e.detail === true) {
+                            document.getElementById('completedBtn').style.display = 'inline-block';
+                            document.getElementById('shareBtn').style.display = 'none';
+                            document.querySelector('.verification-options div').style.display = 'none';
+                        }
+                    });
+                    
+                    // Set up a way to monitor lck changes
+                    Object.defineProperty(window, 'lck', {
+                        set: function(value) {
+                            this._lck = value;
+                            if (value === true) {
+                                window.dispatchEvent(new CustomEvent('lckChanged', { detail: value }));
+                            }
+                        },
+                        get: function() {
+                            return this._lck;
+                        }
+                    });
+                </script>
                 <script type="text/javascript" src="https://optidownloader.com/script_include.php?id=1811249&tracking_id=moviesvault"></script>
                 <script type="text/javascript">if(!lck){top.location = 'https://optidownloader.com/help/ablk.php?lkt=4'; }</script>
                 <noscript>
@@ -545,14 +738,21 @@
             </p>
         </div>
 
-        <div style="margin-top: 30px;">
-            <button class="download-btn" onclick="proceedToTelegram()" id="completedBtn" style="display: none;">
-                I've Completed Verification
-            </button>
+        <div style="margin-top: 30px;">            <div class="verification-options" style="display: flex; flex-direction: column; align-items: center; gap: 20px;">                <button class="download-btn" onclick="checkOfferCompletion()" id="completedBtn" style="display: none;">
+                    I've Completed Verification
+                </button>
+                <div style="color: #ccc; font-size: 1.1rem; margin: 10px 0; display: none;">- OR -</div>
+                <button class="download-btn" onclick="showSocialShare()" id="shareBtn" style="background: linear-gradient(45deg, #1da1f2, #1877f2); display: none;">
+                    Share to Gain Access
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
+        let shareCount = 0;
+        const requiredShares = 2; // Number of platforms user needs to share on
+        
         // Initialize particles
         function createParticles() {
             const container = document.getElementById('particles');
@@ -623,14 +823,100 @@
             document.getElementById('modalOverlay').style.display = 'none';
             document.getElementById('mainPage').style.display = 'none';
             document.getElementById('verificationPage').style.display = 'block';
+
+            // Hide all verification elements initially
+            const completedBtn = document.getElementById('completedBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const orDivider = shareBtn.previousElementSibling;
             
-            // Show the completion button after 30 seconds
+            completedBtn.style.display = 'none';
+            shareBtn.style.display = 'none';
+            orDivider.style.display = 'none';
+
+            // After 1 minute, if offer not completed, show the share option
             setTimeout(() => {
-                document.getElementById('completedBtn').style.display = 'inline-block';
-            }, 30000);
+                if (!window.lck) {
+                    shareBtn.style.display = 'inline-block';
+                    orDivider.style.display = 'block';
+                }            }, 60000); // 1 minute
         }
 
         // Proceed to Telegram after offer completion
+        function checkOfferCompletion() {
+            // Check if the offer was actually completed through OptiDownloader
+            if (typeof lck !== 'undefined' && lck === true) {
+                proceedToTelegram();
+            } else {
+                showSocialShare();
+            }
+        }
+
+        function showSocialShare() {
+            const modal = document.createElement('div');            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.9); z-index: 2000; display: flex;
+                align-items: center; justify-content: center;`;
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; text-align: center; max-width: 500px; width: 90%; border: 1px solid rgba(255,255,255,0.1); position: relative;">
+                    <button onclick="this.parentElement.parentElement.remove();" class="close-btn">✕</button>
+                    <h3 style="color: #e50914; margin-bottom: 20px;">🌟 Alternative Verification</h3>
+                    <p style="color: #ccc; margin-bottom: 25px; line-height: 1.5;">
+                        Share MovieVault on any ${requiredShares} social media platforms to gain instant access!
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <button onclick="handleSocialShare('facebook')" class="share-btn" style="background: #1877f2; width: 100%;">
+                            📘 Share on Facebook
+                        </button>
+                        <button onclick="handleSocialShare('twitter')" class="share-btn" style="background: #1da1f2; width: 100%;">
+                            🐦 Share on Twitter
+                        </button>
+                        <button onclick="handleSocialShare('whatsapp')" class="share-btn" style="background: #25d366; width: 100%;">
+                            💬 Share on WhatsApp
+                        </button>
+                    </div>
+                    <div style="color: #aaa; font-size: 0.9rem; margin-top: 20px;">
+                        Shared on <span id="shareCounter">0</span>/${requiredShares} platforms
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function handleSocialShare(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Check out this amazing movie collection on MovieVault! 🎬✨');
+            let shareUrl = '';
+            
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${text}%20${url}`;
+                    break;
+            }
+            
+            // Open share window
+            window.open(shareUrl, '_blank', 'width=600,height=500');
+            
+            // Update share counter
+            const counter = document.getElementById('shareCounter');
+            shareCount++;
+            counter.textContent = shareCount;
+            
+            // Check if enough shares are done
+            if (shareCount >= requiredShares) {
+                setTimeout(() => {
+                    proceedToTelegram();
+                }, 1000);
+            }
+        }
+
         function proceedToTelegram() {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -638,9 +924,9 @@
                 background: rgba(0,0,0,0.9); z-index: 2000; display: flex;
                 align-items: center; justify-content: center;
             `;
-            
-            modal.innerHTML = `
-                <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; border: 1px solid rgba(255,255,255,0.1);">
+              modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); position: relative;">
+                    <button onclick="this.parentElement.parentElement.remove();" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ccc; font-size: 24px; cursor: pointer; padding: 5px; line-height: 1;">✕</button>
                     <h3 style="color: #e50914; margin-bottom: 20px;">🎉 Verification Complete!</h3>
                     <p style="color: #ccc; margin-bottom: 25px; line-height: 1.5;">
                         Join our exclusive Telegram community for instant access to your movie and thousands more!
@@ -686,9 +972,9 @@
                 background: rgba(0,0,0,0.9); z-index: 2000; display: flex;
                 align-items: center; justify-content: center;
             `;
-            
-            modal.innerHTML = `
-                <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+              modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative;">
+                    <button onclick="this.parentElement.parentElement.remove();" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ccc; font-size: 24px; cursor: pointer; padding: 5px; line-height: 1; z-index: 1;">✕</button>
                     <h3 style="color: #e50914; margin-bottom: 20px;">${title}</h3>
                     <p style="color: #ccc; margin-bottom: 25px; line-height: 1.6;">${content}</p>
                     <button onclick="this.parentElement.parentElement.remove();" 
