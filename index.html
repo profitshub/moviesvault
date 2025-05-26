@@ -331,7 +331,9 @@
             margin: 30px auto;
             max-width: 800px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            min-height: 400px;
+            height: 500px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .offer-wall-title {
@@ -421,39 +423,36 @@
             }            .footer {
                 padding: 30px 0 calc(20px + env(safe-area-inset-bottom));
                 margin-top: 40px;
-            }
-            .footer-content { 
-                grid-template-columns: 1fr;
+            }            .footer-content { 
                 text-align: center;
-                gap: 40px;
             }
             .footer-section { 
                 margin-bottom: 0;
                 padding: 0 20px;
             }
-            .footer-section h3,
-            .footer-section h4 {
+            .footer-section h3 {
                 font-size: 1.4rem;
                 margin-bottom: 15px;
-            }
-            .footer-stats { 
+            }            .footer-stats { 
                 justify-content: center;
-                flex-wrap: wrap;
-                gap: 30px;
+                flex-wrap: nowrap;
+                gap: 20px;
+                padding: 0 10px;
             }
             .stat {
-                flex: 1 1 auto;
-                min-width: 100px;
-                max-width: 150px;
+                flex: 1 1 0;
+                min-width: 0;
                 padding: 10px;
             }
             .stat-number {
                 font-size: 1.4rem;
                 margin-bottom: 5px;
-            }
-            .offer-wall-container {
+            }            .offer-wall-container {
                 padding: 20px 15px;
                 margin: 15px;
+                height: 450px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             .verification-title {
                 font-size: 2rem;
@@ -477,14 +476,22 @@
                 width: calc(100% - 30px);
                 max-width: 250px;
                 margin: 10px auto;
-            }
-            .footer-bottom-content {
-                flex-direction: column;
-                text-align: center;
+            }            .footer-bottom-content {
+                padding: 0 15px;
             }
             .footer-badges {
-                justify-content: center;
-                margin-top: 15px;
+                gap: 4px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .badge {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+                min-width: auto;
+                white-space: nowrap;
+                flex-shrink: 0;
             }
             body {
                 padding-bottom: env(safe-area-inset-bottom);
@@ -498,21 +505,21 @@
             }
             .tagline {
                 font-size: 1rem;
-            }
-            .footer-stats {
-                flex-direction: column;
-                align-items: center;
+            }            .footer-stats {
                 gap: 15px;
+                padding: 0 10px;
             }
             .stat {
-                width: 100%;
-            }
-            .modal {
-                width: 100%;
-                border-radius: 15px 15px 0 0;
-                bottom: 0;
-                top: auto;
-                transform: none !important;
+                flex: 1 1 0;
+                min-width: 0;
+            }            .modal {
+                width: 95%;
+                max-width: 400px;
+                border-radius: 15px;
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) !important;
             }
         }
 
@@ -523,22 +530,21 @@
             margin-top: 60px;
             padding: 50px 0 20px;
             color: #ccc;
-        }
-
-        .footer-content {
+        }        .footer-content {
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 40px;
             padding: 0 20px;
+        }        .footer-section {
+            text-align: center;
+            margin: 0 auto;
+            max-width: 800px;
         }
 
-        .footer-section h3,
-        .footer-section h4 {
+        .footer-section h3 {
             color: #e50914;
             margin-bottom: 20px;
             font-size: 1.2rem;
+            text-align: center;
         }
 
         .footer-logo {
@@ -548,22 +554,27 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: inline-block;
         }
 
         .footer-description {
-            margin-bottom: 25px;
+            margin: 0 auto 25px;
             line-height: 1.6;
             color: #aaa;
-        }
-
-        .footer-stats {
+            max-width: 600px;
+            text-align: center;
+        }.footer-stats {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 40px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            margin: 0 auto;
+            max-width: 800px;
         }
 
         .stat {
             text-align: center;
+            flex: 0 1 auto;
         }
 
         .stat-number {
@@ -612,32 +623,46 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: 40px;
             padding-top: 20px;
-        }
+        }    .footer-bottom-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 15px;
+        text-align: center;
+    }
 
-        .footer-bottom-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+    .footer-bottom-content .copyright {
+        padding: 0 20px;
+    }
 
-        .footer-badges {
+    .footer-bottom-content .footer-badges {
+        width: 100%;
+        padding: 0 10px;
+    }.footer-badges {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 4px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            margin-bottom: 0;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .badge {
             background: rgba(229, 9, 20, 0.1);
             border: 1px solid rgba(229, 9, 20, 0.3);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             color: #e50914;
+            min-width: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-align: center;
         }
     </style>
 </head>
@@ -831,14 +856,19 @@
             
             completedBtn.style.display = 'none';
             shareBtn.style.display = 'none';
-            orDivider.style.display = 'none';
-
-            // After 1 minute, if offer not completed, show the share option
-            setTimeout(() => {
-                if (!window.lck) {
+            orDivider.style.display = 'none';            // Check every 10 seconds for 1 minute if offer is not completed
+            let checkCount = 0;
+            const checkInterval = setInterval(() => {
+                if (!window.lck && checkCount < 6) { // 6 checks * 10 seconds = 1 minute
+                    checkCount++;
+                } else if (!window.lck) {
                     shareBtn.style.display = 'inline-block';
                     orDivider.style.display = 'block';
-                }            }, 60000); // 1 minute
+                    clearInterval(checkInterval);
+                } else {
+                    clearInterval(checkInterval);
+                }
+            }, 10000); // Check every 10 seconds
         }
 
         // Proceed to Telegram after offer completion
@@ -1033,8 +1063,7 @@
         checkUrlParams();
     </script>
 
-    <!-- Professional Footer -->
-    <footer class="footer">
+    <!-- Professional Footer -->    <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
                 <h3 class="footer-logo">MovieVault</h3>
@@ -1053,36 +1082,6 @@
                         <span class="stat-label">Countries</span>
                     </div>
                 </div>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Quick Access</h4>
-                <ul class="footer-links">
-                    <li><a href="#" onclick="scrollToSearch()">🔍 Search Movies</a></li>
-                    <li><a href="#" onclick="showPopularMovies()">🔥 Popular Movies</a></li>
-                    <li><a href="#" onclick="showNewReleases()">🆕 New Releases</a></li>
-                    <li><a href="#" onclick="showGenres()">🎭 Browse Genres</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Community</h4>
-                <ul class="footer-links">
-                    <li><a href="#" onclick="showTelegramInfo()">📱 Join Telegram</a></li>
-                    <li><a href="#" onclick="shareToFacebook()">📘 Facebook Group</a></li>
-                    <li><a href="#" onclick="shareToTwitter()">🐦 Follow Updates</a></li>
-                    <li><a href="#" onclick="showSupport()">💬 Get Support</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>About</h4>
-                <ul class="footer-links">
-                    <li><a href="#" onclick="showAbout()">ℹ️ About Us</a></li>
-                    <li><a href="#" onclick="showPrivacy()">🔒 Privacy Policy</a></li>
-                    <li><a href="#" onclick="showTerms()">📋 Terms of Service</a></li>
-                    <li><a href="#" onclick="showContact()">📧 Contact</a></li>
-                </ul>
             </div>
         </div>
         
