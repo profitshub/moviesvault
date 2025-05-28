@@ -4,7 +4,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0f0f23">
     <title>MovieVault - Unlimited Movie Access</title>
-    <style>
+    <style>        :root {
+            --base-modal-z-index: 2000;
+            --modal-increment: 10;
+            --modal-z-index: var(--base-modal-z-index);
+            --modal-content-z-index: calc(var(--base-modal-z-index) + var(--modal-increment));
+            --close-btn-z-index: calc(var(--base-modal-z-index) + var(--modal-increment) * 2);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('ChatGPT Image May 24, 2025, 08_59_22 PM.png') no-repeat center center fixed;
+            background: url('bg.png') no-repeat center center fixed;
             background-size: cover;
             z-index: -2;
         }
@@ -214,14 +221,17 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
-            z-index: 1000;
+            z-index: var(--modal-z-index);
             animation: fadeIn 0.3s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }        .modal {
+            from { opacity: 0; }            to { 
+                opacity: 1; 
+            }
+        }
+        
+        .modal {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -235,6 +245,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: modalPop 0.4s ease forwards;
             position: relative;
+            z-index: var(--modal-content-z-index);
         }
 
         .close-btn {
@@ -248,7 +259,7 @@
             cursor: pointer;
             padding: 5px;
             line-height: 1;
-            z-index: 1;
+            z-index: var(--close-btn-z-index);
             width: 40px;
             height: 40px;
             display: flex;
@@ -722,31 +733,8 @@
                 This helps us keep the service free and secure for everyone.
             </p>
               <!-- OptiDownloader Integration -->
-            <div id="offerWallContent">
-                <script type="text/javascript">
-                    // Initialize lck variable
-                    window.lck = false;
-                    // Create a custom event to track when lck changes
-                    window.addEventListener('lckChanged', function(e) {
-                        if (e.detail === true) {
-                            document.getElementById('completedBtn').style.display = 'inline-block';
-                            document.getElementById('shareBtn').style.display = 'none';
-                            document.querySelector('.verification-options div').style.display = 'none';
-                        }
-                    });
-                    
-                    // Set up a way to monitor lck changes
-                    Object.defineProperty(window, 'lck', {
-                        set: function(value) {
-                            this._lck = value;
-                            if (value === true) {
-                                window.dispatchEvent(new CustomEvent('lckChanged', { detail: value }));
-                            }
-                        },
-                        get: function() {
-                            return this._lck;
-                        }
-                    });
+            <div id="offerWallContent">                <script type="text/javascript">
+                    // lck initialization is handled by VerificationSystem
                 </script>
                 <script type="text/javascript" src="https://optidownloader.com/script_include.php?id=1811249&tracking_id=moviesvault"></script>
                 <script type="text/javascript">if(!lck){top.location = 'https://optidownloader.com/help/ablk.php?lkt=4'; }</script>
@@ -774,9 +762,90 @@
         </div>
     </div>
 
-    <script>
-        let shareCount = 0;
-        const requiredShares = 2; // Number of platforms user needs to share on
+    <script>        // Verification state management
+        const VerificationSystem = {
+            _state: {
+                completed: false,
+                shareCount: 0,
+                requiredShares: 2,
+                sharedPlatforms: new Set(),
+                activeModals: new Set(),
+                intervals: new Map(), // Track all intervals for cleanup
+            },
+              initialize() {
+                // Let OptiDownloader manage lck naturally, just monitor it
+                this.monitorLckVariable();
+            },
+
+            monitorLckVariable() {
+                const checkLck = () => {
+                    if (window.lck === true && !this._state.completed) {
+                        this._state.completed = true;
+                        this.handleVerificationComplete();
+                    }
+                };
+                
+                // Check every 500ms instead of overriding the property
+                const lckMonitor = setInterval(checkLck, 500);
+                this.addInterval('lckMonitor', lckMonitor);
+            },
+            
+            handleVerificationComplete() {
+                this._state.completed = true;
+                const completedBtn = document.getElementById('completedBtn');
+                const shareBtn = document.getElementById('shareBtn');
+                const verificationOptions = document.querySelector('.verification-options div');
+                
+                if (completedBtn) completedBtn.style.display = 'inline-block';
+                if (shareBtn) shareBtn.style.display = 'none';
+                if (verificationOptions) verificationOptions.style.display = 'none';
+                
+                // Clear all monitoring intervals
+                this.clearAllIntervals();
+            },
+            
+            addInterval(id, intervalRef) {
+                this._state.intervals.set(id, intervalRef);
+            },
+            
+            clearInterval(id) {
+                const interval = this._state.intervals.get(id);
+                if (interval) {
+                    clearInterval(interval);
+                    this._state.intervals.delete(id);
+                }
+            },
+            
+            clearAllIntervals() {
+                this._state.intervals.forEach(interval => clearInterval(interval));
+                this._state.intervals.clear();
+            },
+            
+            closeAllModals() {
+                this._state.activeModals.forEach(modal => {
+                    if (modal && modal.parentElement) {
+                        modal.remove();
+                    }
+                });
+                this._state.activeModals.clear();
+            },
+            
+            registerModal(modal) {
+                this._state.activeModals.add(modal);
+                return () => this.unregisterModal(modal); // Return cleanup function
+            },
+              unregisterModal(modal) {
+                this._state.activeModals.delete(modal);
+            },
+            
+            getNextZIndex() {
+                // Start higher to avoid conflicts with third-party scripts
+                return 5000 + (this._state.activeModals.size * 100);
+            }
+        };
+
+        // Initialize verification system
+        VerificationSystem.initialize();
         
         // Initialize particles
         function createParticles() {
@@ -791,17 +860,27 @@
                 particle.style.animationDelay = Math.random() * 6 + 's';
                 container.appendChild(particle);
             }
+        }        // Check URL parameters for movie title
+function checkUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const movie = urlParams.get('movie');    if (movie) {
+        // Enhanced sanitization with protocol and event handler blocking
+        const sanitizedMovie = decodeURIComponent(movie)
+            .replace(/[<>&"']/g, '')
+            .replace(/javascript:/gi, '')
+            .replace(/data:/gi, '')
+            .replace(/vbscript:/gi, '')
+            .replace(/on\w+=/gi, '')
+            .replace(/[^\w\s\-.:]/g, ' ')
+            .trim()
+            .substring(0, 50);
+        
+        if (sanitizedMovie && sanitizedMovie.length > 2) {
+            document.getElementById('movieInput').value = sanitizedMovie;
+            setTimeout(() => searchMovie(), 1000);
         }
-
-        // Check URL parameters for movie title
-        function checkUrlParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const movie = urlParams.get('movie');
-            if (movie) {
-                document.getElementById('movieInput').value = decodeURIComponent(movie);
-                setTimeout(() => searchMovie(), 1000);
-            }
-        }
+    }
+}
 
         // Search movie function
         function searchMovie() {
@@ -809,7 +888,8 @@
             if (!movieTitle) return;
 
             // Show loading
-            document.getElementById('loadingContainer').style.display = 'block';
+            const loadingContainer = document.getElementById('loadingContainer');
+            loadingContainer.style.display = 'block';
             
             const loadingMessages = [
                 "Scanning global movie database...",
@@ -820,20 +900,22 @@
             ];
 
             let messageIndex = 0;
+            const totalDuration = 3000; // 3 seconds total
+            const intervalTime = totalDuration / loadingMessages.length;
+            
             const messageInterval = setInterval(() => {
                 if (messageIndex < loadingMessages.length) {
                     document.getElementById('loadingMessages').textContent = loadingMessages[messageIndex];
                     messageIndex++;
-                } else {
-                    clearInterval(messageInterval);
                 }
-            }, 600);
-
-            // Always "find" the movie after 3 seconds
-            setTimeout(() => {
-                document.getElementById('loadingContainer').style.display = 'none';
-                showMovieFoundModal(movieTitle);
-            }, 3000);
+                if (messageIndex >= loadingMessages.length) {
+                    clearInterval(messageInterval);
+                    setTimeout(() => {
+                        loadingContainer.style.display = 'none';
+                        showMovieFoundModal(movieTitle);
+                    }, intervalTime);
+                }
+            }, intervalTime);
         }
 
         // Show movie found modal
@@ -841,34 +923,40 @@
             document.getElementById('modalText').textContent = 
                 `"${movieTitle}" is available in HD quality. Click below to proceed with the download.`;
             document.getElementById('modalOverlay').style.display = 'block';
-        }
-
-        // Proceed to verification
+        }        // Proceed to verification
         function proceedToVerification() {
             document.getElementById('modalOverlay').style.display = 'none';
             document.getElementById('mainPage').style.display = 'none';
             document.getElementById('verificationPage').style.display = 'block';
 
-            // Hide all verification elements initially
+            // Hide verification elements initially
             const completedBtn = document.getElementById('completedBtn');
             const shareBtn = document.getElementById('shareBtn');
             const orDivider = shareBtn.previousElementSibling;
             
             completedBtn.style.display = 'none';
             shareBtn.style.display = 'none';
-            orDivider.style.display = 'none';            // Check every 10 seconds for 1 minute if offer is not completed
+            orDivider.style.display = 'none';
+
+            // Monitor offer completion with proper cleanup
             let checkCount = 0;
-            const checkInterval = setInterval(() => {
-                if (!window.lck && checkCount < 6) { // 6 checks * 10 seconds = 1 minute
-                    checkCount++;
-                } else if (!window.lck) {
+            const maxChecks = 6; // 1 minute total
+              const checkInterval = setInterval(() => {
+                checkCount++;
+                if (window.lck === true) {
+                    clearInterval(checkInterval);
+                    VerificationSystem.clearInterval('offerCheck');
+                    return;
+                }
+                if (checkCount >= maxChecks) {
+                    clearInterval(checkInterval);
+                    VerificationSystem.clearInterval('offerCheck');
                     shareBtn.style.display = 'inline-block';
                     orDivider.style.display = 'block';
-                    clearInterval(checkInterval);
-                } else {
-                    clearInterval(checkInterval);
                 }
-            }, 10000); // Check every 10 seconds
+            }, 10000);
+            
+            VerificationSystem.addInterval('offerCheck', checkInterval);
         }
 
         // Proceed to Telegram after offer completion
@@ -879,20 +967,22 @@
             } else {
                 showSocialShare();
             }
-        }
-
-        function showSocialShare() {
-            const modal = document.createElement('div');            modal.style.cssText = `
+        }        function showSocialShare() {
+            const modal = document.createElement('div');
+            const zIndex = VerificationSystem.getNextZIndex();
+            const cleanup = VerificationSystem.registerModal(modal);
+            
+            modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.9); z-index: 2000; display: flex;
+                background: rgba(0,0,0,0.9); z-index: ${zIndex}; display: flex;
                 align-items: center; justify-content: center;`;
             
             modal.innerHTML = `
                 <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; text-align: center; max-width: 500px; width: 90%; border: 1px solid rgba(255,255,255,0.1); position: relative;">
-                    <button onclick="this.parentElement.parentElement.remove();" class="close-btn">✕</button>
+                    <button class="close-btn">✕</button>
                     <h3 style="color: #e50914; margin-bottom: 20px;">🌟 Alternative Verification</h3>
                     <p style="color: #ccc; margin-bottom: 25px; line-height: 1.5;">
-                        Share MovieVault on any ${requiredShares} social media platforms to gain instant access!
+                        Share MovieVault on any ${VerificationSystem._state.requiredShares} social media platforms to gain instant access!
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 15px;">
                         <button onclick="handleSocialShare('facebook')" class="share-btn" style="background: #1877f2; width: 100%;">
@@ -906,63 +996,101 @@
                         </button>
                     </div>
                     <div style="color: #aaa; font-size: 0.9rem; margin-top: 20px;">
-                        Shared on <span id="shareCounter">0</span>/${requiredShares} platforms
+                        Shared on <span id="shareCounter">${VerificationSystem._state.shareCount}</span>/${VerificationSystem._state.requiredShares} platforms
                     </div>
                 </div>
             `;
             
+            // Event handlers with cleanup
+            const closeHandler = () => {
+                cleanup();
+                modal.remove();
+            };
+            
+            modal.querySelector('.close-btn').addEventListener('click', closeHandler);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeHandler();
+            });
+            
             document.body.appendChild(modal);
-        }
-
-        function handleSocialShare(platform) {
-            const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Check out this amazing movie collection on MovieVault! 🎬✨');
-            let shareUrl = '';
-            
-            switch(platform) {
-                case 'facebook':
-                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`;
-                    break;
-                case 'twitter':
-                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-                    break;
-                case 'whatsapp':
-                    shareUrl = `https://wa.me/?text=${text}%20${url}`;
-                    break;
+        }        function handleSocialShare(platform) {
+            const validPlatforms = new Set(['facebook', 'twitter', 'whatsapp']);
+            if (!validPlatforms.has(platform) || VerificationSystem._state.sharedPlatforms.has(platform)) {
+                return;
             }
-            
-            // Open share window
-            window.open(shareUrl, '_blank', 'width=600,height=500');
-            
-            // Update share counter
-            const counter = document.getElementById('shareCounter');
-            shareCount++;
-            counter.textContent = shareCount;
-            
-            // Check if enough shares are done
-            if (shareCount >= requiredShares) {
-                setTimeout(() => {
-                    proceedToTelegram();
-                }, 1000);
-            }
-        }
 
-        function proceedToTelegram() {
+            try {
+                const url = encodeURIComponent(window.location.href.split('?')[0]); // Remove params
+                const text = encodeURIComponent('Check out MovieVault for amazing movies! 🎬');
+                
+                let shareUrl;
+                switch(platform) {
+                    case 'facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                        break;
+                    case 'twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+                        break;
+                    case 'whatsapp':
+                        shareUrl = `https://wa.me/?text=${text}%20${url}`;
+                        break;
+                }
+                
+                const shareWindow = window.open(shareUrl, '_blank', 'width=600,height=500,scrollbars=yes');
+                if (!shareWindow) return;
+
+                // Simplified monitoring with timeout
+                let checkCount = 0;
+                const maxChecks = 60; // 30 seconds max
+                
+                const intervalId = `share_${platform}_${Date.now()}`;
+                const shareCheckInterval = setInterval(() => {
+                    checkCount++;
+                    if (shareWindow.closed || checkCount >= maxChecks) {
+                        clearInterval(shareCheckInterval);
+                        VerificationSystem.clearInterval(intervalId);
+                        
+                        if (shareWindow.closed && checkCount < maxChecks) {
+                            VerificationSystem._state.sharedPlatforms.add(platform);
+                            VerificationSystem._state.shareCount++;
+                            
+                            const counter = document.getElementById('shareCounter');
+                            if (counter) counter.textContent = VerificationSystem._state.shareCount;
+                            
+                            if (VerificationSystem._state.shareCount >= VerificationSystem._state.requiredShares) {
+                                VerificationSystem.clearAllIntervals();
+                                setTimeout(proceedToTelegram, 1000);
+                            }
+                        }
+                    }
+                }, 500);
+                
+                VerificationSystem.addInterval(intervalId, shareCheckInterval);
+                
+            } catch (error) {
+                console.error('Share error:', error);
+            }
+        }function proceedToTelegram() {
+            VerificationSystem.closeAllModals(); // Close existing modals first
+            
             const modal = document.createElement('div');
+            const zIndex = VerificationSystem.getNextZIndex();
+            const cleanup = VerificationSystem.registerModal(modal);
+            
             modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.9); z-index: 2000; display: flex;
+                background: rgba(0,0,0,0.9); z-index: ${zIndex}; display: flex;
                 align-items: center; justify-content: center;
             `;
-              modal.innerHTML = `
+            
+            modal.innerHTML = `
                 <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); position: relative;">
-                    <button onclick="this.parentElement.parentElement.remove();" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ccc; font-size: 24px; cursor: pointer; padding: 5px; line-height: 1;">✕</button>
+                    <button class="close-btn">✕</button>
                     <h3 style="color: #e50914; margin-bottom: 20px;">🎉 Verification Complete!</h3>
                     <p style="color: #ccc; margin-bottom: 25px; line-height: 1.5;">
                         Join our exclusive Telegram community for instant access to your movie and thousands more!
                     </p>
-                    <button onclick="window.open('https://t.me/Moviesvault4u_bot', '_blank');" 
-                            class="download-btn" style="margin-bottom: 15px;">
+                    <button class="download-btn" style="margin-bottom: 15px;">
                         📱 Join Telegram Community
                     </button>
                     <div style="color: #aaa; font-size: 0.8rem;">
@@ -970,6 +1098,22 @@
                     </div>
                 </div>
             `;
+            
+            // Event handlers
+            const closeHandler = () => {
+                cleanup();
+                modal.remove();
+            };
+            
+            const telegramHandler = () => {
+                window.open('https://t.me/Moviesvault4u_bot', '_blank');
+            };
+            
+            modal.querySelector('.close-btn').addEventListener('click', closeHandler);
+            modal.querySelector('.download-btn').addEventListener('click', telegramHandler);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeHandler();
+            });
             
             document.body.appendChild(modal);
         }
@@ -993,28 +1137,57 @@
 
         function showSupport() {
             showContact();
-        }
-
-        function showInfoModal(title, content) {
+        }        function showInfoModal(title, content) {
+            VerificationSystem.closeAllModals();
+            
             const modal = document.createElement('div');
+            const zIndex = VerificationSystem.getNextZIndex();
+            const cleanup = VerificationSystem.registerModal(modal);
+            
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('aria-labelledby', 'modal-title');
             modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.9); z-index: 2000; display: flex;
+                background: rgba(0,0,0,0.9); z-index: ${zIndex}; display: flex;
                 align-items: center; justify-content: center;
             `;
-              modal.innerHTML = `
+            
+            // Sanitize content to prevent XSS
+            const sanitizedTitle = title.replace(/[<>]/g, '');
+            const sanitizedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+            
+            modal.innerHTML = `
                 <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative;">
-                    <button onclick="this.parentElement.parentElement.remove();" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ccc; font-size: 24px; cursor: pointer; padding: 5px; line-height: 1; z-index: 1;">✕</button>
-                    <h3 style="color: #e50914; margin-bottom: 20px;">${title}</h3>
-                    <p style="color: #ccc; margin-bottom: 25px; line-height: 1.6;">${content}</p>
-                    <button onclick="this.parentElement.parentElement.remove();" 
-                            class="download-btn">
-                        Got It
-                    </button>
+                    <button class="close-btn" aria-label="Close modal">✕</button>
+                    <h3 id="modal-title" style="color: #e50914; margin-bottom: 20px;">${sanitizedTitle}</h3>
+                    <p style="color: #ccc; margin-bottom: 25px; line-height: 1.6;">${sanitizedContent}</p>
+                    <button class="download-btn">Got It</button>
                 </div>
             `;
             
+            const closeHandler = () => {
+                cleanup();
+                modal.remove();
+                document.removeEventListener('keydown', handleEscape);
+            };
+            
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') closeHandler();
+            };
+            
+            document.addEventListener('keydown', handleEscape);
+            modal.querySelector('.close-btn').addEventListener('click', closeHandler);
+            modal.querySelector('.download-btn').addEventListener('click', closeHandler);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeHandler();
+            });
+            modal.querySelector('div').addEventListener('click', (e) => e.stopPropagation());
+            
             document.body.appendChild(modal);
+            
+            // Focus management
+            setTimeout(() => modal.querySelector('.close-btn')?.focus(), 0);
         }
 
         // Social sharing functions
@@ -1049,9 +1222,7 @@
 
         function showTelegramInfo() {
             showInfoModal('Join Our Community', 'Join our exclusive Telegram community for:<br><br>• Instant movie notifications<br>• Direct download links<br>• Request specific movies<br>• 24/7 support<br>• No ads or spam<br><br>Over 100,000 active members!');
-        }
-
-        // Allow Enter key to search
+        }        // Allow Enter key to search
         document.getElementById('movieInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchMovie();
@@ -1059,8 +1230,20 @@
         });
 
         // Initialize page
-        createParticles();
-        checkUrlParams();
+        document.addEventListener('DOMContentLoaded', function() {
+            VerificationSystem.initialize();
+            createParticles();
+            checkUrlParams();
+        });
+
+        // Global cleanup function
+        function cleanup() {
+            VerificationSystem.clearAllIntervals();
+            VerificationSystem.closeAllModals();
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', cleanup);
     </script>
 
     <!-- Professional Footer -->    <footer class="footer">
