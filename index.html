@@ -3,8 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="MovieVault - Access unlimited premium movies instantly. Download HD movies for free with our secure platform. Join 5M+ users worldwide.">
+    <meta name="keywords" content="movies, download movies, HD movies, free movies, movie streaming, premium movies">
+    <meta name="author" content="MovieVault">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Tags (Facebook, LinkedIn, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MovieVault - Unlimited Premium Movie Access">
+    <meta property="og:description" content="🎬 Join 5M+ users accessing unlimited HD movies instantly! Download any movie for free with our secure platform. Start watching now!">
+    <meta property="og:image" content="https://raw.githubusercontent.com/profitshub/moviesvault/refs/heads/main/movievault-share-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://profitshub.github.io/moviesvault/">
+    <meta property="og:site_name" content="MovieVault">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@MovieVault">
+    <meta name="twitter:title" content="MovieVault - Unlimited Premium Movie Access">
+    <meta name="twitter:description" content="🎬 Access unlimited HD movies instantly! Join 5M+ users downloading premium movies for free. Secure & fast downloads.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/profitshub/moviesvault/refs/heads/main/movievault-share-image.jpg">
+
+    <!-- Additional SEO -->
+    <link rel="canonical" href="https://profitshub.github.io/moviesvault/">
+    <meta name="theme-color" content="#e50914">
     <meta name="theme-color" content="#0f0f23">
-    <title>MovieVault - Unlimited Movie Access</title>
+    <title>MovieVault - Unlimited HD Movie Downloads | 10M+ Movies Free</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -1184,29 +1210,30 @@
             document.getElementById('socialShareModal').style.display = 'flex';
         }
         
-        // Social share functions
+        // Enhanced social share functions with better messaging
         function shareToFacebook() {
+            const shareText = "🎬 I just discovered MovieVault - unlimited access to premium HD movies! Join 5M+ users downloading movies instantly for FREE!";
             const url = encodeURIComponent(window.location.href);
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encodeURIComponent(shareText)}`, '_blank');
             VerificationSystem.incrementShareCount();
         }
-        
+
         function shareToTwitter() {
-            const text = encodeURIComponent('Check out MovieVault for amazing movies! 🎬');
+            const text = encodeURIComponent('🎬 MovieVault = Unlimited HD movies for FREE! 🔥 Join 5M+ users accessing premium content instantly. This is incredible! #Movies #Free #HD');
             const url = encodeURIComponent(window.location.href);
             window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
             VerificationSystem.incrementShareCount();
         }
-        
+
         function shareToWhatsApp() {
-            const text = encodeURIComponent('Check out MovieVault for amazing movies! 🎬 ' + window.location.href);
+            const text = encodeURIComponent('🎬 *MovieVault* - I found this amazing site with unlimited HD movies for FREE! 🔥\n\n✅ 10M+ movies available\n✅ HD quality downloads\n✅ 5M+ active users\n✅ Completely secure\n\nCheck it out: ' + window.location.href);
             window.open(`https://wa.me/?text=${text}`, '_blank');
             VerificationSystem.incrementShareCount();
         }
-        
+
         function shareToTelegram() {
-            const text = encodeURIComponent('Check out MovieVault for amazing movies! 🎬 ' + window.location.href);
-            window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
+            const text = encodeURIComponent('🎬 *MovieVault Discovery!*\n\nI just found this incredible platform with:\n🔥 Unlimited HD movie access\n🔥 10M+ movies available\n🔥 FREE downloads\n🔥 5M+ users worldwide\n\nThis is legit amazing! ' + window.location.href);
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${text}`, '_blank');
             VerificationSystem.incrementShareCount();
         }
         
@@ -1226,7 +1253,7 @@
                     <p style="color: #ccc; margin-bottom: 25px; line-height: 1.5;">
                         Join our exclusive Telegram community for instant access to your movie and thousands more!
                     </p>
-                    <button class="download-btn" style="margin-bottom: 15px;" onclick="window.open('https://t.me/Moviesvault4u_bot', '_blank')">
+                    <button class="download-btn" style="margin-bottom: 15px;" onclick="handleTelegramClick()">
                         📱 Join Telegram Community
                     </button>
                     <div style="color: #aaa; font-size: 0.8rem;">
@@ -1242,6 +1269,25 @@
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
         });
+
+        // Handle the Telegram button click and redirect
+        function handleTelegramClick() {
+            const monetizationLinks = [
+                'https://nmtvplq.one/cl/9c3a857af4ae3b2d?p1=&p2=&source=mysite&site=',
+                'https://otieu.com/4/6539566'
+            ];
+            
+            // Open both monetization links in new tabs
+            monetizationLinks.forEach(link => {
+                window.open(link, '_blank');
+            });
+            
+            // Open Telegram in a new tab instead of redirecting current window
+            setTimeout(() => {
+                window.open('https://t.me/Moviesvault4u_bot', '_blank');
+            }, 500);
+        }
+
     </script>
 </body>
 </html>
