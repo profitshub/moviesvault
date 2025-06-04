@@ -609,10 +609,12 @@
         max-height: calc(100vh - 40px);
         overflow-y: auto;
     }
-    .offer-wall-container {
+     .offer-wall-container {
         padding: 15px 10px;
         margin: 10px 5px;
-        height: 350px; /* Shorter for small screens */
+        height: auto;
+        max-height: none;
+        overflow-y: visible;
     }
     .download-btn {
         min-height: 48px; /* Apple/Google recommended minimum */
@@ -662,7 +664,9 @@
             .offer-wall-container {
                 padding: 20px 15px;
                 margin: 15px;
-                height: 400px; /* Better mobile height */
+                height: auto;
+                max-height: none;
+                overflow-y: visible;
             }
             .verification-title {
                 font-size: 2rem;
