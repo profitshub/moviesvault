@@ -54,8 +54,15 @@
             color: white;
             overflow-x: hidden;
             min-height: 100vh;
-            background: url('bg.png') no-repeat center center fixed;
+            background: url('bg.png') no-repeat center center;
             background-size: cover;
+        }
+
+        /* Add specific mobile background handling */
+                @media (max-width: 768px) {
+            body {
+                background-attachment: scroll; /* Better mobile support */
+            }
         }
 
         /* Add this new pseudo-element for the dark overlay */
