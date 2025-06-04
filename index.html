@@ -62,38 +62,64 @@
             background-attachment: fixed;
         }
 
-                /* Mobile background fixes - critical for image loading */
-        @media (max-width: 768px) {
-            body {
-                background-attachment: scroll !important; /* iOS Safari fix */
-                background-image: url('./bg.png') !important; /* Ensure image path works on mobile */
-                background-size: cover !important;
-                background-position: center center !important;
-                min-height: 100vh;
-                min-height: -webkit-fill-available; /* iOS viewport fix */
-            }
-        }
-        
-        @media (max-width: 480px) {
-            body {
-                background-attachment: scroll !important;
-                background-image: url('./bg.png') !important; /* Redundant but ensures loading */
-                background-size: cover !important;
-                background-position: center center !important;
-            }
-        }
+                /* Critical mobile fixes */
+                @media (max-width: 768px) {
+                    body {
+        /* Force background to show on mobile */
+                        background-attachment: scroll !important;
+                        background-image: url('./bg.png') !important;
+                        background-size: cover !important;
+                        background-position: center center !important;
+                        background-repeat: no-repeat !important;
+                        
+                        /* iOS Safari specific fixes */
+                        min-height: 100vh;
+                        min-height: -webkit-fill-available;
+                        
+                        /* Force hardware acceleration */
+                        -webkit-transform: translateZ(0);
+                        transform: translateZ(0);
+                        
+                        /* Prevent background from disappearing */
+                        -webkit-backface-visibility: hidden;
+                        backface-visibility: hidden;
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    body {
+                        background-attachment: scroll !important;
+                        background-image: url('./bg.png') !important;
+                        background-size: cover !important;
+                        background-position: center center !important;
+                        
+                        /* Additional mobile fixes */
+                        -webkit-background-size: cover !important;
+                        -moz-background-size: cover !important;
+                        -o-background-size: cover !important;
+                    }
+                }
 
-        /* Add this new pseudo-element for the dark overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Dark overlay with 60% opacity */
-            z-index: -1;
-        }
+                       body::before {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.6);
+                    z-index: -1;
+                }
+                
+                /* Mobile overlay fix */
+                @media (max-width: 768px) {
+                    body::before {
+                        position: absolute !important; /* Fixed positioning causes issues on mobile */
+                        background: rgba(0, 0, 0, 0.5) !important; /* Lighter overlay */
+                        min-height: 100vh;
+                        min-height: -webkit-fill-available;
+                    }
+                }
         
         .background-animation {
             position: fixed;
@@ -932,6 +958,18 @@
     <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=6840b9467c84420012f17c23&product=sop' async='async'></script>
 </head>
 <body>
+        <script>
+        // Force background reload on mobile devices
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            const timestamp = new Date().getTime();
+            document.body.style.backgroundImage = `url('./bg.png?v=${timestamp}')`;
+            
+            // Force a repaint
+            document.body.offsetHeight;
+            
+            console.log('Mobile device detected - background refreshed');
+        }
+        </script>
         <script>
         // Debug script to check if image is loading
         const img = new Image();
