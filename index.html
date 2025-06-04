@@ -48,20 +48,38 @@
             box-sizing: border-box;
         }
         
-            body {
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             position: relative;
             color: white;
             overflow-x: hidden;
             min-height: 100vh;
-            background: url('bg.png') no-repeat center center;
+            /* Ensure local image loads with proper path handling */
+            background-image: url('./bg.png');
             background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
-        /* Add specific mobile background handling */
-                @media (max-width: 768px) {
+                /* Mobile background fixes - critical for image loading */
+        @media (max-width: 768px) {
             body {
-                background-attachment: scroll; /* Better mobile support */
+                background-attachment: scroll !important; /* iOS Safari fix */
+                background-image: url('./bg.png') !important; /* Ensure image path works on mobile */
+                background-size: cover !important;
+                background-position: center center !important;
+                min-height: 100vh;
+                min-height: -webkit-fill-available; /* iOS viewport fix */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                background-attachment: scroll !important;
+                background-image: url('./bg.png') !important; /* Redundant but ensures loading */
+                background-size: cover !important;
+                background-position: center center !important;
             }
         }
 
@@ -914,6 +932,21 @@
     <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=6840b9467c84420012f17c23&product=sop' async='async'></script>
 </head>
 <body>
+        <script>
+        // Debug script to check if image is loading
+        const img = new Image();
+        img.onload = function() {
+            console.log('Background image loaded successfully');
+            document.body.style.backgroundImage = 'url("./bg.png")';
+        };
+        img.onerror = function() {
+            console.log('Background image failed to load - check file path');
+            // Fallback gradient if image fails
+            document.body.style.background = 'linear-gradient(135deg, #0a0a1a, #1a1a2e, #e50914)';
+        };
+        img.src = './bg.png';
+        </script>
+        
     <div class="background-animation">
         <div class="floating-particles" id="particles"></div>
     </div>
